@@ -1,7 +1,7 @@
 # ID CHAIN
 
 > **Repository Notice**
-> This is a public fork of [Pandi Gitlab](https://git.247.or.id/pandi/idchain-testnet/-/tree/feat/async-backing?ref_type=heads) (private). To comply with licensing and confidentiality requirements, this fork contains a limited, sanitized subset of the source code and history. Some features are intentionally omitted or replaced with placeholders.
+> This is a public fork of [IDCHAIN Gitlab](https://git.247.or.id/pandi/idchain-testnet/-/tree/feat/async-backing?ref_type=heads) (private). To comply with licensing and confidentiality requirements, this fork contains a limited, sanitized subset of the source code and history. Some features are intentionally omitted or replaced with placeholders.
 
 A Madya Solo chain implementation, build with [Substrate](https://substrate.io/). It is started as a standalone blockchain that will be evolved into a parachain of Utama Mandala relay chain.
 
