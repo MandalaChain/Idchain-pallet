@@ -1,216 +1,463 @@
-# ID CHAIN
+# IDCHAIN - A Substrate-Based Blockchain
+
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![License](https://img.shields.io/badge/license-Apache%202.0-green)
+![Substrate](https://img.shields.io/badge/substrate-v1.7.2-brightgreen)
 
 > **Repository Notice**
 > This is a public fork of [IDCHAIN Gitlab](https://git.247.or.id/pandi/idchain-testnet/-/tree/feat/async-backing?ref_type=heads) (private). To comply with licensing and confidentiality requirements, this fork contains a limited, sanitized subset of the source code and history. Some features are intentionally omitted or replaced with placeholders.
 
-A Madya Solo chain implementation, build with [Substrate](https://substrate.io/). It is started as a standalone blockchain that will be evolved into a parachain of Utama Mandala relay chain.
+## Overview
 
-## Getting Started
+IDCHAIN is a blockchain infrastructure built with [Substrate](https://substrate.io/), designed as a Layer-1 solution for decentralized identity and digital credentials. The project leverages cutting-edge blockchain technology to provide a scalable, secure, and decentralized network.
 
-Depending on your operating system and Rust version, there might be additional packages required to compile this repository.
-Check the [Install](https://docs.substrate.io/install/) instructions for your platform for the most common dependencies.
-Alternatively, you can use one of the [alternative installation](#alternatives-installations) options.
+### Project Components
+- **Relay Chain Support**: Full integration with Polkadot SDK for relay chain validators
+- **DID System**: Decentralized Identifier (DID) capabilities for identity management
+- **Credentials**: Public credential management and verification
+- **Delegation**: Delegation logic for identity operations
 
-### Build
+For complete project details and architecture, refer to the [IDCHAIN Relaychain Deployment Handbook](https://hackmd.io/Z6f3ZRJBTbaXffKNshFhDQ?view).
 
-Use the following command to build the node without launching it:
+## Quick Start
+
+### System Requirements
+
+Before starting, ensure your system meets these requirements:
+
+**Hardware (Recommended for Production)**
+- **CPU**: 8 physical cores @ 3.4GHz (Intel Ice Lake or newer, AMD Zen3 or newer)
+- **Memory**: 32 GB DDR4 ECC
+- **Storage**: 1 TB NVMe SSD
+- **Network**: Minimum 500 Mbit/s symmetric bandwidth
+- **OS**: Linux Kernel 5.16 or newer (Ubuntu 24.04 recommended)
+
+**Development Requirements**
+- Rust 1.74.0 or newer
+- Git, Clang, and build essentials
+- Optional: Docker for containerized deployment
+
+### Prerequisites Setup
+
+#### Install Rust and Dependencies
+
+```sh
+sudo apt install --assume-yes git clang curl libssl-dev protobuf-compiler make pkg-config build-essential
+```
+
+```sh
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+source $HOME/.cargo/env
+```
+
+Install specific Rust version:
+```sh
+rustup install 1.74.0
+rustup default 1.74.0
+cargo --version  # Verify installation
+```
+
+**For macOS users:**
+```sh
+brew install cmake pkg-config openssl git llvm
+```
+
+#### Configure NTP (Critical for Network Nodes)
+
+```sh
+timedatectl  # Check if NTP is synchronized
+sudo apt-get install ntp  # If not installed
+sudo ntpq -p  # Verify NTP status
+```
+
+> **Warning**: NTP synchronization is critical for block authorship. Nodes with unsynchronized clocks may miss block opportunities.
+
+#### Verify Landlock is Enabled
+
+```sh
+sudo dmesg | grep landlock || sudo journalctl -kg landlock
+```
+
+### Build the Project
 
 ```sh
 cargo build --release
 ```
 
-### Embedded Docs
-
-After you build the project, you can use the following command to explore its parameters and subcommands:
+The build process may take 30-80 minutes depending on your hardware. After completion, verify the installation:
 
 ```sh
-./target/release/evm-node -h
-```
-```sh
-./target/release/did-node -h
+./target/release/did-node --version
 ```
 
-You can generate and view the [Rust Docs](https://doc.rust-lang.org/cargo/commands/cargo-doc.html) for this repository with this command:
+### Generate Documentation
 
 ```sh
 cargo +nightly doc --open
 ```
 
-### Running Zombienet (Simulated Local Network for Testing)
+## Running Nodes
 
-1. copy the zombienet binary from https://github.com/paritytech/zombienet/releases to the binaries folder and make it globally executable. You can use the script `download-zombienet.sh` to do this.
-2. clone the Polkadot SDK repo with the same branch as dependencies (https://github.com/paritytech/polkadot-sdk/tree/release-crates-io-v1.7.0) and build the binary with `cargo build -r`
+### Development Mode
 
-4. generate a plain chainspec for IDCHAIN parachain
-
-```bash
-./target/release/idchain-parachain build-spec --disable-default-bootnode --dev > /scripts/zombienet/plain-idchain-chainspec.json
-```
-
-5. go to zombienet directory
-
-```bash
-cd scripts/zombienet
-```
-
-6. adjust the chain configuration in the config.toml file to your needs, then run the script
-
-```bash
-zombienet -p native spawn config.toml
-```
-
-### Single-Node Development Chain
-
-The following command starts a EVM-node development chain that doesn't persist state:
-
-```sh
-./target/release/evm-node --dev --database auto
-```
-The following command starts a did-node development chain that doesn't persist state:
+#### Single-Node Development Chain (DID)
 
 ```sh
 ./target/release/did-node --dev
 ```
 
-To purge the development chain's state, run the following command:
-
-```sh
-./target/release/evm-node purge-chain --dev
-```
-```sh
-./target/release/did-node purge-chain --dev
-```
-
-To start the development chain with detailed logging, run the following command:
-
-```sh
-RUST_BACKTRACE=1 ./target/release/evm-node -ldebug --dev
-```
+To start with detailed logging:
 ```sh
 RUST_BACKTRACE=1 ./target/release/did-node -ldebug --dev
 ```
 
-## Chain Specification
-A chain specification (chain spec) is a configuration file that defines the initial state (genesis) of your blockchain. It plays a crucial role in defining the properties of your blockchain, such as the network's name, node boot information, initial validator set, genesis accounts, and more. Chain specs can be used in different environments, such as development, testing, or production.
-
-### Creating a Chain Specification
-To generate a raw chain specification file for your node, use the following command:
-```bash
-./target/release/evm-node build-spec --chain dev > dev-spec.json
-```
-For the DID node, use:
-```bash
-./target/release/did-node build-spec --chain dev > did-dev-spec.json
-```
-Usage of Chain Specifications
-Chain specs are used for several purposes:
-1. Development and Testing: Chain specs help simulate a real network environment in development and testing phases by defining specific configurations that can be easily replicated across multiple nodes.
-2. Network Bootstrapping: In a production environment, chain specs are essential for bootstrapping the network, as they contain all the necessary initial state data.
-3. Customization: Chain specs allow you to customize various parameters, such as consensus mechanisms, runtime configurations, and account balances, without modifying the source code.
-Chain specifications are vital when setting up and managing your blockchain network, ensuring consistent behavior across all nodes.
-
----
-
-**Development chains:**
-
-- Maintain state in a `tmp` folder while the node is running.
-- Use the **Alice** and **Bob** accounts as default validator authorities.
-- Use the **Alice** account as the default `sudo` account.
-- Are preconfigured with a genesis state (`/node/chain_spec.rs`) that includes several prefunded development accounts.
-
-To persist chain state between runs, specify a base path by running a command similar to the following:
-
+To persist state between runs:
 ```sh
-// Create a folder to use as the db base path
-$ mkdir my-chain-state
-
-// Use of that folder to store the chain state
-$ ./target/release/madya-node --dev --base-path ./my-chain-state/
-
-// Check the folder structure created inside the base path after running the chain
-$ ls ./my-chain-state
-chains
-$ ls ./my-chain-state/chains/
-dev
-$ ls ./my-chain-state/chains/dev
-db keystore network
+mkdir -p ~/my-chain-state
+./target/release/did-node --dev --base-path ~/my-chain-state/
 ```
 
-### Connect with Polkadot-JS Apps Front-End
-
-After you start this node locally, you can interact with it using the hosted version of the [Polkadot/Substrate Portal](https://polkadot.js.org/apps/#/explorer?rpc=ws://localhost:9944) front-end by connecting to the local node endpoint.
-A hosted version is also available on [IPFS (redirect) here](https://dotapps.io/) or [IPNS (direct) here](ipns://dotapps.io/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/explorer).
-You can also find the source code and instructions for hosting your own instance on the [polkadot-js/apps](https://github.com/polkadot-js/apps) repository.
+To purge the development chain's state:
+```sh
+./target/release/did-node purge-chain --dev
+```
 
 ### Multi-Node Local Testnet
 
-If you want to see the multi-node consensus algorithm in action, see [Simulate a network](https://docs.substrate.io/tutorials/get-started/simulate-network/).
+Refer to [Simulate a Network](https://docs.substrate.io/tutorials/get-started/simulate-network/) in the Substrate documentation.
 
-## Madya Mandala Structure
+### Production Deployment
 
-A Madya Solo L1 blockchain consists of a number of components that are spread across a few directories.
+For complete production deployment instructions, refer to the [IDCHAIN Relaychain Deployment Handbook](https://hackmd.io/Z6f3ZRJBTbaXffKNshFhDQ?view), which includes:
+
+- Hardware requirements and benchmarks
+- Validator key generation and management
+- Chain specification configuration
+- Systemd service setup for automated management
+- RPC endpoint setup with Nginx for WebSocket access
+- Network bootstrapping and monitoring
+
+**Quick Start:**
+```sh
+git clone https://git.247.or.id/munir/idchain-polkadot-sdk.git
+cd idchain-polkadot-sdk
+cargo build --release
+./target/release/subkey generate --scheme Sr25519  # Generate validator keys
+```
+
+#### Parachain Collator Setup
+
+Parachain deployment is now handled through standardized infrastructure. For complete details, refer to the [IDCHAIN Parachain Deployment Handbook](https://hackmd.io/8TOVne-uQoCYHWVTykn2CA?view).
+
+#### Relay Chain Validator Setup
+
+Complete deployment instructions are available in the [IDCHAIN Relaychain Deployment Handbook](https://hackmd.io/Z6f3ZRJBTbaXffKNshFhDQ?view).
+
+**Quick Summary:**
+1. Build the relay chain binaries from [idchain-polkadot-sdk](https://git.247.or.id/munir/idchain-polkadot-sdk.git)
+2. Generate validator keys using `subkey`
+3. Create and configure custom chain specification files
+4. Configure systemd services for automated management
+5. Set up RPC endpoints with Nginx for WebSocket access
+
+**Key Steps:**
+```sh
+git clone https://git.247.or.id/munir/idchain-polkadot-sdk.git
+cd idchain-polkadot-sdk
+cargo build --release
+./target/release/subkey generate --scheme Sr25519  # Generate validator keys
+```
+
+## Chain Specifications
+
+A chain specification (chain spec) defines the initial state (genesis) of your blockchain, including network name, boot nodes, validator set, genesis accounts, and runtime parameters.
+
+### Chain Spec Files
+
+Chain specifications are available in the `chainspecs/` directory:
+- **Mainnet**: `chainspecs/parachain-mainnet/parachain-mainnet.json`
+- **Testnet**: `chainspecs/parachain-testnet/`
+- **Staging**: `chainspecs/parachain-testnet-stg/`
+- **Standalone**: `chainspecs/standalone/standalone-testnet.json`
+
+### Generating Chain Specifications
+
+#### DID Node
+```bash
+./target/release/did-node build-spec --chain dev > did-dev-spec.json
+```
+
+#### Raw Format (for production)
+```bash
+./target/release/did-node build-spec --chain=did-dev-spec.json --raw --disable-default-bootnode > did-dev-spec-raw.json
+```
+
+### Chain Spec Customization
+
+Modify the JSON chain spec file to:
+1. Update `name`, `id`, and `protocolId` fields
+2. Configure consensus parameters (`aura`, `grandpa`)
+3. Set initial validators and their session keys
+4. Define genesis balances
+
+For detailed chain spec guidelines, refer to:
+- [IDCHAIN Relaychain Chainspec Guide](https://hackmd.io/Z6f3ZRJBTbaXffKNshFhDQ?view#IDCHAIN-Relaychain-Chainspec-Guide)
+
+## Interacting with the Network
+
+### Polkadot.js Apps
+
+Connect to the running node using the Polkadot.js Apps interface:
+
+1. **Local Development Node**: [http://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944](http://polkadot.js.org/apps/?rpc=ws://127.0.0.1:9944)
+2. **Alternative**: [IPFS Version](ipns://dotapps.io/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/explorer)
+
+### WebSocket RPC Setup
+
+For production nodes, expose the RPC endpoint through Nginx with WebSocket support:
+
+```nginx
+server {
+    server_name node-rpc.idchain.id;
+
+    location / {
+        proxy_pass http://localhost:9944;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+    }
+
+    listen 80;
+}
+```
+
+Then enable SSL:
+```bash
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d node-rpc.idchain.id
+```
+
+Access via: `https://polkadot.js.org/apps/?rpc=wss://node-rpc.idchain.id`
+
+## Project Architecture
+
+### Network Structure
+
+IDCHAIN follows a modular architecture designed for scalability and interoperability:
+
+```
+IDCHAIN Ecosystem
+├── Relay Chain (Validator Network)
+│   ├── Validators (block production & finality)
+│   └── Authority Discovery
+│
+```
 
 ### Validator Node
 
-Validator node is a blockchain node that allows users to participate in a blockchain network by following certain `conesnsus` mechanism.
+A validator node participates in consensus by:
+- Following the consensus mechanism (Aura/BABE for block production, GRANDPA for finality)
+- Validating blocks from other network participants
+- Maintaining the blockchain state
+- Exposing RPC endpoints for external access
 
-> For future reference, Madya Mandala will be a parachain in Utama Mandala Relay, hence Madya node become a `collator` as it evolves. In this case, Madya Mandala will produce blocks and send them to Utama relay chain and be validated by Utama `validators`.
+**Validator Requirements:**
+- Reference hardware specs (see System Requirements above)
+- Synchronized clock (NTP)
+- Stable, high-bandwidth internet connection
+- Generated validator keys and session keys
 
-Because Madya Mandala is a Substrate-based blockchain, the nodes expose a number of capabilities:
+### Runtime Implementation
 
-- Networking: Substrate nodes use the [`libp2p`](https://libp2p.io/) networking stack to allow the
-  nodes in the network to communicate with one another.
-- Consensus: Blockchains must have a way to come to [consensus](https://docs.substrate.io/fundamentals/consensus/) on the state of the network.
-  Substrate makes it possible to supply custom consensus engines and also ships with several consensus mechanisms that have been built on top of [Web3 Foundation research](https://research.web3.foundation/en/latest/polkadot/NPoS/index.html).
-- RPC Server: A remote procedure call (RPC) server is used to interact with Substrate nodes.
+The runtime is the core logic of the blockchain responsible for:
+- Validating blocks
+- Executing state transitions
+- Processing extrinsics (transactions)
 
-There are several files in the `node` directory.
-Take special note of the following:
+IDCHAIN uses [FRAME](https://docs.substrate.io/fundamentals/runtime-development/#frame) to construct the runtime, allowing flexible composition of domain-specific logic through **pallets**.
 
-- [`chain_spec.rs`](./node/src/chain_spec.rs): A [chain specification](https://docs.substrate.io/build/chain-spec/) is a source code file that defines a Substrate chain's initial (genesis) state.
-  Chain specifications are useful for development and testing, and critical when architecting the launch of a production chain.
-  Take note of the `development_config` and `testnet_genesis` functions,.
-  These functions are used to define the genesis state for the local development chain configuration.
-  These functions identify some [well-known accounts](https://docs.substrate.io/reference/command-line-tools/subkey/) and use them to configure the blockchain's initial state.
-- [`service.rs`](./node/src/service.rs): This file defines the node implementation.
-  Take note of the libraries that this file imports and the names of the functions it invokes.
-  In particular, there are references to consensus-related topics, such as the [block finalization and forks](https://docs.substrate.io/fundamentals/consensus/#finalization-and-forks) and other [consensus mechanisms](https://docs.substrate.io/fundamentals/consensus/#default-consensus-models) such as Aura for block authoring and GRANDPA for finality.
+### Pallets (Runtime Modules)
 
-### Runtime
+Custom pallets are located in the `pallets/` directory:
 
-In Substrate, the terms "runtime" and "state transition function" are analogous.
-Both terms refer to the core logic of the blockchain that is responsible for validating blocks and executing the state changes they define.
-The Substrate project in this repository uses [FRAME](https://docs.substrate.io/fundamentals/runtime-development/#frame) to construct a blockchain runtime.
-FRAME allows runtime developers to declare domain-specific logic in modules called "pallets".
-At the heart of FRAME is a helpful [macro language](https://docs.substrate.io/reference/frame-macros/) that makes it easy to create pallets and flexibly compose them to create blockchains that can address [a variety of needs](https://substrate.io/ecosystem/projects/).
+| Pallet | Purpose |
+|--------|---------|
+| `delegation` | Delegation logic for governance |
+| `pallet-dip-consumer` | DIP (Decentralized Identity Provider) consumer pallet |
+| `pallet-dip-provider` | DIP provider functionality |
+| `pallet-did-lookup` | DID to address mapping |
+| `pallet-web3-names` | Web3 name registration and resolution |
+| `public-credentials` | Credential management and verification |
+| `verification` | Identity verification mechanisms |
+| `uid-core` | Universal Identity core functionality |
+| `uid-credential` | Universal Identity credential management |
+| `pallet-asset-switch` | Asset switching capabilities |
+| `pallet-configuration` | Configuration management |
+| `pallet-deposit-storage` | Deposit and storage management |
+| `pallet-migration` | Migration utilities |
+| `pallet-relay-store` | Relay chain state store |
 
-Review the [FRAME runtime implementation](./runtime/src/lib.rs) included in this repository and note the following:
+Each pallet includes:
+- **Storage**: Key-value data structures for chain state
+- **Dispatchables**: Callable functions (extrinsics) to modify state
+- **Events**: Notifications for state changes
+- **Errors**: Error handling and reporting
 
-- This file configures several pallets to include in the runtime.
-  Each pallet configuration is defined by a code block that begins with `impl $PALLET_NAME::Config for Runtime`.
-- The pallets are composed into a single runtime by way of the [`construct_runtime!`](https://crates.parity.io/frame_support/macro.construct_runtime.html) macro, which is part of the core FRAME Support [system](https://docs.substrate.io/reference/frame-pallets/#system-pallets) library.
+### Runtime APIs
 
-### Pallets
+Located in `runtime-api/`, these provide read-only access to runtime state:
+- **`asset-switch`**: Query asset switching functionality
+- **`did`**: DID lookup and management queries
+- **`dip-provider`**: DIP provider information and queries
+- **`public-credentials`**: Credential and verification queries
+- **`staking`**: Staking information and rewards
 
-The runtime in this project is constructed using many FRAME pallets that ship with the [core Substrate repository](https://github.com/paritytech/substrate/tree/master/frame) and a template pallet that is [defined in the `pallets`](./pallets/template/src/lib.rs) directory.
-
-A FRAME pallet is compromised of a number of blockchain primitives:
-
-- Storage: FRAME defines a rich set of powerful [storage abstractions](https://docs.substrate.io/build/runtime-storage/) that makes it easy to use Substrate's efficient key-value database to manage the evolving state of a blockchain.
-- Dispatchables: FRAME pallets define special types of functions that can be invoked (dispatched) from outside of the runtime in order to update its state.
-- Events: Substrate uses [events and errors](https://docs.substrate.io/build/events-and-errors/) to notify users of important changes in the runtime.
-- Errors: When a dispatchable fails, it returns an error.
-- Config: The `Config` configuration interface is used to define the types and parameters upon which a FRAME pallet depends.
-
-## Alternatives Installations
-
-Instead of installing dependencies and building this source directly, consider the following alternatives.
+## Alternative Installations
 
 ### Nix
 
-Install [nix](https://nixos.org/), and optionally [direnv](https://github.com/direnv/direnv) and [lorri](https://github.com/nix-community/lorri) for a fully plug-and-play experience for setting up the development environment.
-To get all the correct dependencies, activate direnv `direnv allow` and lorri `lorri shell`.
+Install [Nix](https://nixos.org/), and optionally [direnv](https://github.com/direnv/direnv) and [lorri](https://github.com/nix-community/lorri) for a plug-and-play development environment:
+
+```sh
+direnv allow
+lorri shell
+```
 
 ### Docker
 
-Please follow the [Substrate Docker instructions here](https://github.com/paritytech/substrate/blob/master/docker/README.md) to build the Docker container with the Madya Node binary.
+For containerized deployment, refer to [Substrate Docker instructions](https://github.com/paritytech/substrate/blob/master/docker/README.md).
+
+## Documentation & Resources
+
+### Official Handbooks
+
+Comprehensive deployment and configuration guides:
+
+- **[IDCHAIN Relaychain Deployment Handbook](https://hackmd.io/Z6f3ZRJBTbaXffKNshFhDQ?view)**
+  - Complete validator node setup guide
+  - Hardware requirements and benchmarks
+  - Chain specification configuration
+  - Systemd service management
+  - RPC endpoint setup with Nginx
+  - Polkadot.js integration
+
+### External Resources
+
+- **[Substrate Documentation](https://docs.substrate.io/)**
+- **[Polkadot Wiki](https://wiki.polkadot.network/)**
+- **[FRAME Developer Guide](https://docs.substrate.io/fundamentals/runtime-development/)**
+- **[Polkadot JS Apps](https://polkadot.js.org/apps/)**
+
+## Testing & Benchmarking
+
+### Running Tests
+
+```sh
+# Run all tests
+cargo test --release
+
+# Run tests for a specific pallet
+cargo test -p pallet-dip-consumer --release
+```
+
+### Benchmarking
+
+Benchmark your pallets to optimize performance:
+
+```sh
+cargo build --package frame-benchmarking-cli --release
+
+./target/release/substrate benchmark pallet \
+  --chain dev \
+  --pallet '*' \
+  --extrinsic '*'
+```
+
+### Zombienet Testing
+
+For complex network simulations, use Zombienet:
+
+1. Download the [Zombienet binary](https://github.com/paritytech/zombienet/releases)
+2. Clone the [Polkadot SDK](https://github.com/paritytech/polkadot-sdk) (same branch)
+3. Generate plain chain spec:
+   ```bash
+   ./target/release/idchain-parachain build-spec --disable-default-bootnode --dev > chainspecs/plain-idchain-chainspec.json
+   ```
+4. Configure `scripts/zombienet/config.toml` and run:
+   ```bash
+   cd scripts/zombienet
+   zombienet -p native spawn config.toml
+   ```
+
+## Common Issues & Troubleshooting
+
+### Build Fails
+
+**Solution**: Ensure Rust version is correct and dependencies are installed:
+```sh
+rustup update
+rustup default 1.74.0
+rustc --version
+```
+
+### Node Won't Start
+
+**Solution**: Check ports aren't already in use:
+```sh
+lsof -i :9944  # Check RPC port
+lsof -i :30333  # Check P2P port
+```
+
+### Keys Not Injecting
+
+**Solution**: Verify the key format and use the correct RPC methods:
+```sh
+curl -H "Content-Type: application/json" -d '{
+  "jsonrpc": "2.0",
+  "method": "author_insertKey",
+  "params": ["aura", "<seed_phrase>", "<public_key_hex>"],
+  "id": 1
+}' http://localhost:9944
+```
+
+### Performance Issues
+
+**Checklist:**
+- Verify system clock is synchronized (NTP)
+- Check network connectivity to peers
+- Monitor CPU, memory, and disk I/O
+- Increase `--wasm-execution` optimization if needed
+- Consider upgrading hardware
+
+## Security
+
+### Key Management
+
+⚠️ **Critical Security Practices**:
+- Never share your seed phrases or secret keys
+- Store sudo keys in a secure, offline location
+- Use hardware wallets for production validator keys
+- Rotate keys periodically
+- Use environment variables or secure vaults for sensitive data
+
+### Validator Security
+
+- Keep your node software up to date
+- Firewall RPC ports appropriately
+- Use VPN for remote management
+- Monitor node logs for suspicious activity
+- Enable Nginx SSL/TLS for all RPC endpoints
+
+## License
+
+This project is licensed under the terms specified in the `LICENSE` file. Refer to the [IDCHAIN private repository](https://git.247.or.id/pandi/idchain-testnet/) for the complete licensing information.
+
+## Support & Community
+
+For issues and discussions:
+- Check existing documentation in the [handbooks](#documentation--resources)
+- Review the [Substrate Stack Exchange](https://substrate.stackexchange.com/)
+- Engage with the [Polkadot community](https://polkadot.network/community/)
+
+---
