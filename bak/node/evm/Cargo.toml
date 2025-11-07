@@ -1,0 +1,118 @@
+[package]
+name = "id-chain"
+version = "0.3.0"
+description = "Id chain node implementation."
+license = "MIT-0"
+publish = false
+build = "build.rs"
+default-run = "evm-node"
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[[bin]]
+name = "evm-node"
+path = "src/main.rs"
+
+[dependencies]
+clap = { workspace = true }
+futures = { workspace = true }
+serde_json = { workspace = true }
+
+sc-cli = { workspace = true }
+sp-core = { workspace = true }
+sc-executor = { workspace = true }
+sc-network = { workspace = true }
+sc-service = { workspace = true }
+sc-telemetry = { workspace = true }
+sc-transaction-pool = { workspace = true }
+sc-transaction-pool-api = { workspace = true }
+sc-offchain = { workspace = true }
+sc-statement-store = { workspace = true }
+sc-consensus-aura = { workspace = true }
+sp-consensus-aura = { workspace = true }
+sc-consensus = { workspace = true }
+sc-consensus-grandpa = { workspace = true }
+sp-consensus-grandpa = { workspace = true }
+sc-client-api = { workspace = true }
+sp-runtime = { workspace = true }
+sp-io = {workspace = true, features = ["std"]}
+sp-timestamp = { workspace = true }
+sp-inherents = { workspace = true }
+sp-keyring = { workspace = true }
+frame-system = { workspace = true }
+pallet-transaction-payment = { workspace = true }
+sc-consensus-manual-seal = { workspace = true }
+sc-network-sync = { workspace = true }
+sc-rpc = { workspace = true }
+sc-network-common = { workspace = true }
+prometheus-endpoint = { workspace = true }
+sp-trie = { workspace = true }
+log = { workspace = true }
+async-trait = { workspace = true }
+
+# These dependencies are used for the node's RPCs
+jsonrpsee = { workspace = true }
+sp-api = { workspace = true }
+sc-rpc-api = { workspace = true }
+sp-blockchain = { workspace = true }
+sp-block-builder = { workspace = true }
+sc-basic-authorship = { workspace = true }
+substrate-frame-rpc-system = { workspace = true }
+pallet-transaction-payment-rpc = { workspace = true }
+
+# These dependencies are used for runtime benchmarking
+frame-benchmarking = { workspace = true }
+frame-benchmarking-cli = { workspace = true }
+
+
+# Frontier Client
+fc-cli = { workspace = true }
+fc-consensus = { workspace = true }
+fc-db = { workspace = true }
+fc-mapping-sync = { workspace = true }
+fc-rpc = { workspace = true }
+fc-rpc-core = { workspace = true }
+fc-storage = { workspace = true }
+fp-rpc = { workspace = true, features = ["default"] }
+fp-dynamic-fee = { workspace = true }
+sp-transaction-pool = { workspace = true }
+sp-offchain = { workspace = true }
+sp-session = { workspace = true }
+frame-system-rpc-runtime-api = { workspace = true }
+pallet-transaction-payment-rpc-runtime-api = { workspace = true }
+hex-literal = { workspace = true }
+fc-api = { workspace = true }
+
+
+# evm primitives
+fp-evm = { workspace = true }
+fp-account = { workspace = true }
+
+# Local Dependencies
+evm-runtime = { workspace = true, features = ["std"] }
+
+# CLI-specific dependencies
+# try-runtime-cli = { workspace = true, optional = true }
+
+[build-dependencies]
+substrate-build-script-utils.workspace = true
+
+[features]
+default = []
+# Dependencies that are only required if runtime benchmarking should be build.
+runtime-benchmarks = [
+	"evm-runtime/runtime-benchmarks",
+	"frame-benchmarking/runtime-benchmarks",
+	"frame-benchmarking-cli/runtime-benchmarks",
+]
+txpool = []
+# Enable features that allow the runtime to be tried and debugged. Name might be subject to change
+# in the near future.
+try-runtime = ["evm-runtime/try-runtime", 
+# "try-runtime-cli/try-runtime"
+]
