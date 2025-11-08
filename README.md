@@ -1,7 +1,7 @@
-# IDCHAIN - A Substrate-Based Blockchain
+# IDCHAIN - A Decentralized Identifier Blockchain Infrastructure
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-Apache%202.0-green)
+![License](https://img.shields.io/badge/license-MIT-green)
 ![Substrate](https://img.shields.io/badge/substrate-v1.7.2-brightgreen)
 
 > **Repository Notice**
@@ -9,15 +9,53 @@
 
 ## Overview
 
-IDCHAIN is a blockchain infrastructure built with [Substrate](https://substrate.io/), designed as a Layer-1 solution for decentralized identity and digital credentials. The project leverages cutting-edge blockchain technology to provide a scalable, secure, and decentralized network.
+IDCHAIN is a blockchain infrastructure built with Mandala Application Chain technology, designed as a Layer-1 solution for decentralized identity and digital credentials. As part of the broader digital identity ecosystem, IDCHAIN provides a secure, scalable, and interoperable platform that enables individuals and organizations to manage their digital identities with full sovereignty and privacy.
+
+### Key Features
+
+**🔐 Decentralized Identity Management**
+- Self-sovereign identity (SSI) principles with user-controlled data
+- W3C-compliant Decentralized Identifiers (DIDs) standard implementation
+- Privacy-preserving identity verification mechanisms
+- Cross-chain identity portability and interoperability
+
+**📜 Verifiable Credentials System**
+- Issue, store, and verify digital credentials securely
+- Support for multiple credential formats and schemas
+- Selective disclosure capabilities for privacy protection
+- Tamper-proof credential lifecycle management
+
+**🏛️ Governance & Delegation**
+- Flexible delegation mechanisms for identity operations
+- Democratic governance for network parameter updates
+- Stake-based consensus for network security
+- Community-driven protocol evolution
+
+**🌐 Enterprise Integration**
+- RESTful APIs for seamless integration
+- SDK support for multiple programming languages
+- Compliance with international identity standards
+- Scalable architecture for enterprise workloads
 
 ### Project Components
 - **Relay Chain Support**: Full integration with Polkadot SDK for relay chain validators
 - **DID System**: Decentralized Identifier (DID) capabilities for identity management
-- **Credentials**: Public credential management and verification
-- **Delegation**: Delegation logic for identity operations
+- **Credentials**: Public credential management and verification system
+- **Delegation**: Flexible delegation logic for identity operations
+- **Asset Switch**: Cross-chain asset and identity portability
+- **Web3 Names**: Decentralized naming service for human-readable identities
 
-For complete project details and architecture, refer to the [IDCHAIN Relaychain Deployment Handbook](https://hackmd.io/Z6f3ZRJBTbaXffKNshFhDQ?view).
+### Use Cases
+
+IDCHAIN enables a wide range of identity-centric applications:
+- **Digital Identity Wallets**: Self-custody identity management
+- **Educational Credentials**: Tamper-proof academic certificates
+- **Professional Licensing**: Verifiable professional qualifications
+- **Supply Chain Identity**: Product authenticity and traceability
+- **Government Services**: Digital citizenship and e-governance
+- **Healthcare Records**: Privacy-preserving medical credentials
+
+For complete project details, technical specifications, and implementation roadmap, refer to the [IDCHAIN Whitepaper](https://idchain.id/en/about/whitepaper).
 
 ## Quick Start
 
@@ -139,8 +177,8 @@ For complete production deployment instructions, refer to the [IDCHAIN Relaychai
 
 **Quick Start:**
 ```sh
-git clone https://git.247.or.id/munir/idchain-polkadot-sdk.git
-cd idchain-polkadot-sdk
+git clone https://github.com/MandalaChain/Idchain-pallet.git
+cd Idchain-pallet
 cargo build --release
 ./target/release/subkey generate --scheme Sr25519  # Generate validator keys
 ```
@@ -451,7 +489,7 @@ curl -H "Content-Type: application/json" -d '{
 
 ## License
 
-This project is licensed under the terms specified in the `LICENSE` file. Refer to the [IDCHAIN private repository](https://git.247.or.id/pandi/idchain-testnet/) for the complete licensing information.
+This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ## Support & Community
 
