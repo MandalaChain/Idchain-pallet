@@ -180,7 +180,7 @@ Parachain deployment is now handled through standardized infrastructure. For com
 Complete deployment instructions are available in the [IDCHAIN Relaychain Deployment Handbook](https://hackmd.io/Z6f3ZRJBTbaXffKNshFhDQ?view).
 
 **Quick Summary:**
-1. Build the relay chain binaries from [idchain-polkadot-sdk](https://git.247.or.id/munir/idchain-polkadot-sdk.git)
+1. Build the relay chain binaries from [polkadot-sdk](https://github.com/MandalaChain/polkadot-sdk/tree/moonbeam-polkadot-v1.7.2)
 2. Generate validator keys using `subkey`
 3. Create and configure custom chain specification files
 4. Configure systemd services for automated management
@@ -188,8 +188,8 @@ Complete deployment instructions are available in the [IDCHAIN Relaychain Deploy
 
 **Key Steps:**
 ```sh
-git clone https://git.247.or.id/munir/idchain-polkadot-sdk.git
-cd idchain-polkadot-sdk
+git clone https://github.com/MandalaChain/polkadot-sdk/tree/moonbeam-polkadot-v1.7.2
+cd polkadot-sdk
 cargo build --release
 ./target/release/subkey generate --scheme Sr25519  # Generate validator keys
 ```
@@ -370,6 +370,7 @@ Comprehensive deployment and configuration guides:
 
 ### External Resources
 
+- **[IDCHAIN Website](https://idchain.id/en)**
 - **[Substrate Documentation](https://docs.substrate.io/)**
 - **[Polkadot Wiki](https://wiki.polkadot.network/)**
 - **[FRAME Developer Guide](https://docs.substrate.io/fundamentals/runtime-development/)**
