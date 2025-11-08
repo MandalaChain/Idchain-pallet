@@ -25,18 +25,6 @@ IDCHAIN is a blockchain infrastructure built with Mandala Application Chain tech
 - Selective disclosure capabilities for privacy protection
 - Tamper-proof credential lifecycle management
 
-**🏛️ Governance & Delegation**
-- Flexible delegation mechanisms for identity operations
-- Democratic governance for network parameter updates
-- Stake-based consensus for network security
-- Community-driven protocol evolution
-
-**🌐 Enterprise Integration**
-- RESTful APIs for seamless integration
-- SDK support for multiple programming languages
-- Compliance with international identity standards
-- Scalable architecture for enterprise workloads
-
 ### Project Components
 - **Relay Chain Support**: Full integration with Polkadot SDK for relay chain validators
 - **DID System**: Decentralized Identifier (DID) capabilities for identity management
